@@ -6,9 +6,6 @@
   - **Frontend**: React JS
   - **Backend:**: Firebase (Database, Authentication, Hosting)
   - **Language**: JSS and CSS
-  - **Database**: MySQL Server
-  - **Payment API integration**: Khalti
-  - **For Authentication**: Gmail API
 
 ## SDLC Model
 <br>
