@@ -1,0 +1,117 @@
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #e0e7ff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.app-header {
+  text-align: center;
+  background-color: #3b5998;
+  color: white;
+  width: 100%;
+  padding: 20px;
+  font-size: 30px; 
+  font-weight: bold;
+}
+
+.app-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.room label {
+  text-align: center;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #3b5998;
+  font-weight: bold;
+}
+
+.room input {
+  width: 250px;
+  height: 40px;
+  border: 1px #ffffff;
+  border-radius: 6px;
+  padding-left: 10px;
+  font-size: 18px;
+  text-align: center;
+  margin: 10px;
+  background-color: #ffffff;
+}
+
+.room button {
+  width: 260px;
+  height: 45px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  text-align: center;
+  margin: 10px;
+  background-color: #3b5998;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.room button:hover {
+  background-color: #6786c4;
+}
+
+.sign-out {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.sign-out button {
+  background-color: #3b5998; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px 20px;
+  font-size: 16px; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.sign-out button:hover {
+  background-color: red; 
+}
+
+.sign-out p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d; 
+}
+
+
+.footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 10px;
+  width: 100%;
+  background-color: #e0e7ff;
+  color: #555;
+  font-size: 0.9em;
+}

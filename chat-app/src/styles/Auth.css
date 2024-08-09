@@ -1,0 +1,35 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.auth {
+    text-align: center;
+    padding: 20px;
+}
+
+.auth button {
+    width: 220px;
+    height: 55px;
+    border: none;
+    background-color: #5b7fcd;
+    color: white;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth button:hover {
+    background-color: #3b5998;
+    transform: translateY(-2px);
+}
+
+.auth button:active {
+    background-color: #1a2a43;
+    transform: translateY(0);
+}
