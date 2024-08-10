@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { db, auth, storage } from "../firebase-config";  
+import React, { useState, useEffect, useRef } from "react";
+import { db, auth, storage } from "../firebase-config";
 import {
   collection,
   addDoc,
@@ -9,15 +9,25 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";  
-
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import "../styles/Chat.css";
+
+
+const linkify = (text) => {
+  const urlRegex = /((https?:\/\/[^\s]+))/g;
+  return text.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+};
 
 export const Chat = ({ room }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [file, setFile] = useState(null);  
+  const [file, setFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0); 
   const messagesRef = collection(db, "messages");
+
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const queryMessages = query(
@@ -25,7 +35,7 @@ export const Chat = ({ room }) => {
       where("room", "==", room),
       orderBy("createdAt")
     );
-    const unsuscribe = onSnapshot(queryMessages, (snapshot) => {
+    const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
       let messages = [];
       snapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
@@ -34,8 +44,12 @@ export const Chat = ({ room }) => {
       setMessages(messages);
     });
 
-    return () => unsuscribe();
+    return () => unsubscribe();
   }, [room]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -47,21 +61,45 @@ export const Chat = ({ room }) => {
     let fileURL = null;
     if (file) {
       const fileRef = ref(storage, `uploads/${file.name}`);
-      const uploadTask = await uploadBytesResumable(fileRef, file);
-      fileURL = await getDownloadURL(uploadTask.ref);
+      const uploadTask = uploadBytesResumable(fileRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Upload failed: ", error);
+          setUploadProgress(0); 
+        },
+        async () => {
+          fileURL = await getDownloadURL(uploadTask.snapshot.ref);
+          await addDoc(messagesRef, {
+            text: newMessage || "",
+            file: fileURL || null,
+            createdAt: serverTimestamp(),
+            user: displayName,
+            userPhoto: photoURL,
+            room,
+          });
+          setNewMessage("");
+          setFile(null);
+          setUploadProgress(0); 
+        }
+      );
+    } else {
+      await addDoc(messagesRef, {
+        text: newMessage || "",
+        file: fileURL || null,
+        createdAt: serverTimestamp(),
+        user: displayName,
+        userPhoto: photoURL,
+        room,
+      });
+      setNewMessage("");
     }
-
-    await addDoc(messagesRef, {
-      text: newMessage || "",
-      file: fileURL || null,
-      createdAt: serverTimestamp(),
-      user: displayName,
-      userPhoto: photoURL,
-      room,
-    });
-
-    setNewMessage("");
-    setFile(null);
   };
 
   return (
@@ -71,25 +109,42 @@ export const Chat = ({ room }) => {
       </div>
       <div className="messages">
         {messages.map((message) => (
-          <div key={message.id} className="message">
+          <div
+            key={message.id}
+            className={`message ${
+              message.user === auth.currentUser.displayName
+                ? "user-message"
+                : "other-message"
+            }`}
+          >
             <div className="message-header">
               {message.userPhoto && (
-                <img src={message.userPhoto} alt="User Profile" className="user-photo" />
+                <img
+                  src={message.userPhoto}
+                  alt="User Profile"
+                  className="user-photo"
+                />
               )}
               <span className="user">{message.user}</span>
             </div>
-            <div className="message-text">
-              {message.text}
-            </div>
+            <div
+              className="message-text"
+              dangerouslySetInnerHTML={{ __html: linkify(message.text) }}
+            />
             {message.file && (
               <div className="message-file">
                 <a href={message.file} target="_blank" rel="noopener noreferrer">
-                  <img src={message.file} alt="uploaded file" className="uploaded-file" />
+                  <img
+                    src={message.file}
+                    alt="uploaded file"
+                    className="uploaded-file"
+                  />
                 </a>
               </div>
             )}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="new-message-form">
         <input
@@ -99,11 +154,22 @@ export const Chat = ({ room }) => {
           className="new-message-input"
           placeholder="Type your message here..."
         />
-        <input
-          type="file"
-          onChange={(event) => setFile(event.target.files[0])}
-          className="file-input"
-        />
+        <div className="file-input-container">
+          <label className="custom-file-upload">
+            <img src="attach-file.png" alt="attach file icon" />
+          
+            <input
+              type="file"
+              onChange={(event) => setFile(event.target.files[0])}
+              className="hidden-file-input"
+            />
+          </label>
+        </div>
+        {uploadProgress > 0 && (
+          <div className="upload-progress">
+            <span>Uploading: {Math.round(uploadProgress)}%</span>
+          </div>
+        )}
         <button type="submit" className="send-button">
           Send
         </button>

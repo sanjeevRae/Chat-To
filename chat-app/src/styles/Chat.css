@@ -135,9 +135,10 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  height: 70vh;
+  height: 80vh;
   overflow-y: auto;
   padding: 15px;
+  margin-top: 5px;
   background-color: #f4f4f8;
   border-bottom: 1px solid #ccc;
 }
@@ -151,8 +152,18 @@
   padding: 10px;
   border-radius: 10px;
   width: auto;
-  max-width: 80%;
+  max-width: 100%;
   word-wrap: break-word;
+}
+
+.message.user-message {
+  align-self: flex-end;
+  background-color: #d1e7dd;
+}
+
+.message.other-message {
+  align-self: flex-start;
+  background-color: #f8d7da;
 }
 
 .message-header {
@@ -179,7 +190,6 @@
   margin-top: 10px;
   padding: 15px;
   border-radius: 12px;
-  background: #e1e4ea;
   width: 100%;
 }
 
@@ -199,31 +209,65 @@
 
 .new-message-form {
   display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
   width: 100%;
-  padding: 15px;
+  padding: 10px;
   background-color: #f4f4f8;
   border-top: 1px solid #ccc;
-}
 
 .new-message-input {
-  flex: 1;
+ 
+  width: 82%;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-left: 5%;
+  border-radius: 5px;
+  padding: 10px;
   border: 1px solid #ccc;
-  outline: none;
   background: #fff;
   font-size: 16px;
   color: #333;
-  padding: 10px;
-  border-radius: 5px 0 0 5px;
 }
 
-.file-input {
-  flex: -1;
+.hidden-file-input {
+  display: none;
+}
+
+.file-input-container {
+  width: 100%; 
+}
+
+.custom-file-upload {
+  display: inline-flex;
   padding: 10px;
+ margin-bottom:10px ;
+ margin-left: 90%;
+ width: 24px;
   border: 1px solid #ccc;
-  border-radius: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.custom-file-upload img {
+  width: 24px;
+  height: 24px;
+}
+
+.custom-file-upload span {
+  margin-left: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.custom-file-upload:hover {
+  background-color: #f4f4f8;
 }
 
 .send-button {
+  width: 90%;
+  margin-left: 5%;
   border: none;
   outline: none;
   background: #3b5998;
@@ -231,68 +275,44 @@
   font-size: 16px;
   font-weight: bold;
   padding: 10px 20px;
-  margin-left: 10px;
-  border-radius: 0 5px 5px 0;
+  border-radius: 5px;
   cursor: pointer;
+ 
 }
 
 .send-button:hover {
   background: #617db9;
 }
 
-/* Responsive styles */
+.upload-progress {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #333;
+}
+
 @media (max-width: 600px) {
-  .chat-app {
-    width: 95%;
-    margin: 10px auto;
-  }
-
-  .header {
-    font-size: 1.5em;
-    padding: 10px;
-  }
-
-  .messages {
-    height: 60vh;
-    padding: 10px;
-  }
-
-  .message {
-    margin-left: 10px;
-    max-width: 90%;
-  }
-
-  .message-header {
-    flex-direction: column;
-  }
-
-  .user-photo {
-    width: 30px;
-    height: 30px;
-    margin-right: 5px;
-  }
-
-  .user {
-    font-size: 14px;
-  }
-
   .new-message-form {
-    flex-direction: column;
     padding: 10px;
   }
 
-  .new-message-input {
-    margin-bottom: 10px;
-    border-radius: 5px;
+  .new-message-input{
+   flex:1;
+    width: 80%;
   }
-
-  .file-input {
+  .custom-file-upload{
+    
+    margin-right: 5px;
     margin-bottom: 10px;
+    width: 20%;
+
+  }
+  .send-button {
+    margin-bottom: 10px;
+    width: 100%;
   }
 
   .send-button {
-    width: 100%;
-    border-radius: 5px;
-    margin: 0;
+    padding: 8px 15px;
   }
+}
 }
