@@ -147,6 +147,7 @@ export const Chat = ({ room }) => {
         <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="new-message-form">
+    <div className="input-and-file-container">
         <input
           type="text"
           value={newMessage}
@@ -155,25 +156,26 @@ export const Chat = ({ room }) => {
           placeholder="Type your message here..."
         />
         <div className="file-input-container">
-          <label className="custom-file-upload">
-            <img src="attach-file.png" alt="attach file icon" />
-          
-            <input
-              type="file"
-              onChange={(event) => setFile(event.target.files[0])}
-              className="hidden-file-input"
-            />
-          </label>
+            <label className="custom-file-upload">
+                <img src="attach-file.png" alt="attach file icon" />
+                <input
+                  type="file"
+                  onChange={(event) => setFile(event.target.files[0])}
+                  className="hidden-file-input"
+                />
+            </label>
         </div>
-        {uploadProgress > 0 && (
-          <div className="upload-progress">
-            <span>Uploading: {Math.round(uploadProgress)}%</span>
-          </div>
-        )}
-        <button type="submit" className="send-button">
-          Send
-        </button>
-      </form>
+    </div>
+    {uploadProgress > 0 && (
+      <div className="upload-progress">
+        <span>Uploading: {Math.round(uploadProgress)}%</span>
+      </div>
+    )}
+    <button type="submit" className="send-button">
+      Send
+    </button>
+</form>
+
     </div>
   );
 };
