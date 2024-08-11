@@ -1,48 +1,88 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const rooms = {}; // To keep track of rooms and their participants
+const PORT = process.env.PORT || 5000;
+
+// Serve the static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Handles any requests that don't match the ones above
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+let rooms = {};
 
 io.on('connection', (socket) => {
-  console.log('New user connected:', socket.id);
+  console.log('New client connected');
 
   socket.on('join-room', (roomId) => {
+    console.log(`User ${socket.id} joining room ${roomId}`);
+
     socket.join(roomId);
 
-    // Notify other users in the room that a new user has joined
-    socket.to(roomId).emit('new-peer', socket.id);
-
-    // Store user in the room
     if (!rooms[roomId]) {
-      rooms[roomId] = [];
+      rooms[roomId] = new Set();
     }
-    rooms[roomId].push(socket.id);
 
-    // Handle user leaving the room
-    socket.on('disconnect', () => {
-      rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
-      socket.to(roomId).emit('user-disconnected', socket.id);
+    rooms[roomId].add(socket.id);
+    console.log(`Participants in room ${roomId}: ${rooms[roomId].size}`);
+
+    // Broadcast updated participant count
+    io.to(roomId).emit('update-participant-count', rooms[roomId].size);
+
+    socket.on('send-offer', (data) => {
+      socket.to(data.target).emit('receive-offer', {
+        offer: data.offer,
+        peerId: socket.id,
+      });
     });
-  });
 
-  socket.on('send-offer', (data) => {
-    io.to(data.target).emit('receive-offer', data.offer);
-  });
+    socket.on('send-answer', (data) => {
+      socket.to(data.target).emit('receive-answer', {
+        answer: data.answer,
+        peerId: socket.id,
+      });
+    });
 
-  socket.on('send-answer', (data) => {
-    io.to(data.target).emit('receive-answer', data.answer);
-  });
+    socket.on('send-ice-candidate', (data) => {
+      socket.to(data.target).emit('receive-ice-candidate', data);
+    });
 
-  socket.on('send-ice-candidate', (data) => {
-    io.to(data.target).emit('receive-ice-candidate', data.candidate);
+    socket.on('leave-room', (roomId) => {
+      socket.leave(roomId);
+
+      rooms[roomId].delete(socket.id);
+
+      // Broadcast updated participant count
+      io.to(roomId).emit('update-participant-count', rooms[roomId].size);
+
+      if (rooms[roomId].size === 0) {
+        delete rooms[roomId];
+      }
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
+      for (const roomId in rooms) {
+        rooms[roomId].delete(socket.id);
+
+        if (rooms[roomId].size === 0) {
+          delete rooms[roomId];
+        } else {
+          io.to(roomId).emit('update-participant-count', rooms[roomId].size);
+        }
+      }
+    });
   });
 });
 
-server.listen(5000, () => {
-  console.log('Server is running on port 5000');
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
