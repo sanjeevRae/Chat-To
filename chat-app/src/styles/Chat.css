@@ -112,14 +112,33 @@
 }
 
 .header {
-  background-color: #3b5998;
-  color: white;
-  width: 100%;
-  text-align: center;
-  padding: 20px;
-  font-size: 2em;
-  font-weight: bold;
+  background-color: #3b5998; 
+  color: white; 
+  width: 100%; 
+  text-align: center; 
+  padding: 20px; 
+  font-size: 2em; 
+  font-weight: bold; 
+  position: relative; 
 }
+
+.header-images {
+ 
+  position: absolute; 
+  right: 20px; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  display: flex; 
+  gap: 10px; 
+  cursor: pointer;
+}
+
+.header-image {
+  padding-right: 14px;
+  height: 20px; 
+  width: auto; 
+}
+
 
 .chat-app .header h1 {
   font-size: 25px;
@@ -221,7 +240,7 @@
 }
 .new-message-form {
   display: flex;
-  flex-direction: column; /* Ensure elements stack vertically if needed */
+  flex-direction: column;
   padding: 10px;
 }
 
@@ -302,6 +321,13 @@
   margin: 10px 0;
   font-size: 14px;
   color: #333;
+}
+
+.message-time {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 5px;
+  text-align: right;
 }
 
 

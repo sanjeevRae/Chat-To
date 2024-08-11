@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Chat } from "./components/Chat";
-import { Auth } from "./components/Auth.js";
+import { Auth } from "./components/Auth";
 import { AppWrapper } from "./components/AppWrapper";
+import { CallRoom } from "./components/CallRoom";  // Import CallRoom
 import Cookies from "universal-cookie";
 import "./App.css";
 
@@ -11,6 +12,18 @@ function ChatApp() {
   const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
   const [isInChat, setIsInChat] = useState(null);
   const [room, setRoom] = useState("");
+  const [isInCall, setIsInCall] = useState(false);  // Track if in a call
+  const [callRoomId, setCallRoomId] = useState("");  // Store call room ID
+
+  const startCall = (roomId) => {
+    setCallRoomId(roomId);
+    setIsInCall(true);
+  };
+
+  const endCall = () => {
+    setIsInCall(false);
+    setCallRoomId("");
+  };
 
   if (!isAuth) {
     return (
@@ -26,9 +39,11 @@ function ChatApp() {
 
   return (
     <AppWrapper isAuth={isAuth} setIsAuth={setIsAuth} setIsInChat={setIsInChat}>
-      {!isInChat ? (
+      {isInCall ? (
+        <CallRoom roomId={callRoomId} onEndCall={endCall} />
+      ) : !isInChat ? (
         <div className="room">
-          <label> Type Room ID: </label>
+          <label>Type Room ID:</label>
           <input onChange={(e) => setRoom(e.target.value)} />
           <button
             onClick={() => {
@@ -36,6 +51,11 @@ function ChatApp() {
             }}
           >
             Enter Chat
+          </button>
+          <button
+            onClick={() => startCall(room)}  // Start call with the room ID
+          >
+            Start Video Call
           </button>
         </div>
       ) : (
