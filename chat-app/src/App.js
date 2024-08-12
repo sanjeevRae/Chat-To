@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Chat } from "./components/Chat";
 import { Auth } from "./components/Auth";
 import { AppWrapper } from "./components/AppWrapper";
-import CallRoom from "./components/CallRoom"; // Import CallRoom as default
+import {CallRoom} from "./components/CallRoom"; // Import CallRoom as default
 import Cookies from "universal-cookie";
 import "./App.css";
 
