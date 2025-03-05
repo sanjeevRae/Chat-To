@@ -2,6 +2,7 @@
 # Chat To: Free Online Chat Platform
 **Chat To**  is an online chat platform that offers a simple, free, and secure way for users to communicate. Unlike other platforms, Chat To is committed to user privacy, ensuring that your data is never sold or misused.
 
+
 ## Technologies
   - **Frontend**: React JS
   - **Backend:**: Firebase (Database, Authentication, Hosting)
